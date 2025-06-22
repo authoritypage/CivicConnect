@@ -1,4 +1,6 @@
 import { cities, officers, cases, type City, type Officer, type Case, type InsertCity, type InsertOfficer, type InsertCase } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // Cities
@@ -15,6 +17,47 @@ export interface IStorage {
   getCasesByCity(cityName: string): Promise<Case[]>;
   getCasesByOfficer(officerId: number): Promise<Case[]>;
   getCaseById(id: number): Promise<Case | undefined>;
+}
+
+export class DatabaseStorage implements IStorage {
+  async getCities(): Promise<City[]> {
+    return await db.select().from(cities);
+  }
+
+  async getCityById(id: number): Promise<City | undefined> {
+    const [city] = await db.select().from(cities).where(eq(cities.id, id));
+    return city || undefined;
+  }
+
+  async getOfficers(): Promise<Officer[]> {
+    return await db.select().from(officers);
+  }
+
+  async getOfficersByCity(cityName: string): Promise<Officer[]> {
+    return await db.select().from(officers).where(eq(officers.cityName, cityName));
+  }
+
+  async getOfficerById(id: number): Promise<Officer | undefined> {
+    const [officer] = await db.select().from(officers).where(eq(officers.id, id));
+    return officer || undefined;
+  }
+
+  async getCases(): Promise<Case[]> {
+    return await db.select().from(cases);
+  }
+
+  async getCasesByCity(cityName: string): Promise<Case[]> {
+    return await db.select().from(cases).where(eq(cases.cityName, cityName));
+  }
+
+  async getCasesByOfficer(officerId: number): Promise<Case[]> {
+    return await db.select().from(cases).where(eq(cases.officerId, officerId));
+  }
+
+  async getCaseById(id: number): Promise<Case | undefined> {
+    const [case_] = await db.select().from(cases).where(eq(cases.id, id));
+    return case_ || undefined;
+  }
 }
 
 export class MemStorage implements IStorage {
@@ -163,4 +206,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
