@@ -2,8 +2,11 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import type { City, Officer, Case } from "@shared/schema";
+import { GoogleGenAI } from "@google/genai";
 
-// Local intelligent response generator
+const ai = new GoogleGenAI({ apiKey: "AIzaSyBL5bRSmrrdAOSV-BTpEaTJSSqdY5VGp2k" });
+
+// Local intelligent response generator (fallback)
 function generateIntelligentResponse(message: string, data: { cities: City[], officers: Officer[], cases: Case[] }): string {
   const { cities, officers, cases } = data;
   
@@ -231,7 +234,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI Chat route - Local intelligent analysis
+  // AI Chat route - Gemini AI powered analysis
   app.post("/api/chat", async (req, res) => {
     try {
       const { message } = req.body;
@@ -245,8 +248,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const officers = await storage.getOfficers();
       const cases = await storage.getCases();
 
-      const response = generateIntelligentResponse(message.toLowerCase(), { cities, officers, cases });
-      res.json({ response });
+      try {
+        // Use Gemini AI for intelligent analysis
+        const context = {
+          cities,
+          officers,
+          cases,
+          totalCities: cities.length,
+          totalOfficers: officers.length,
+          totalActiveCases: cases.length,
+          averageTransparencyScore: Math.round(cities.reduce((sum, city) => sum + city.transparencyScore, 0) / cities.length)
+        };
+
+        const systemPrompt = `You are an AI assistant for the Santa Barbara County Accountability Portal, a government transparency platform investigating corruption. You help analyze corruption cases, officer records, and transparency data.
+
+Current data context:
+- Cities: ${JSON.stringify(context.cities)}
+- Officers: ${JSON.stringify(context.officers)}
+- Cases: ${JSON.stringify(context.cases)}
+
+Guidelines:
+1. Answer questions about specific officers, cities, cases, and corruption investigations
+2. Provide detailed analysis of transparency scores and trends
+3. Help connect cases to officers and identify patterns
+4. Maintain a serious, professional tone appropriate for government accountability
+5. Always cite specific data from the context when answering
+6. Focus on accountability, transparency, and corruption investigation
+7. If asked about something not in the data, clearly state you don't have that information
+8. Use markdown formatting for better readability
+
+Respond in a helpful, factual manner focused on government transparency and accountability.`;
+
+        const response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: [
+            { role: "user", parts: [{ text: systemPrompt + "\n\nUser question: " + message }] }
+          ],
+        });
+
+        const aiResponse = response.text || "I'm unable to process that request right now.";
+        res.json({ response: aiResponse });
+      } catch (geminiError) {
+        console.error('Gemini AI error:', geminiError);
+        // Fallback to local intelligent response
+        const response = generateIntelligentResponse(message.toLowerCase(), { cities, officers, cases });
+        res.json({ response });
+      }
     } catch (error) {
       console.error('Chat error:', error);
       res.status(500).json({ message: "Failed to process chat request" });

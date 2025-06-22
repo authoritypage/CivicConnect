@@ -18,7 +18,7 @@ export default function AIChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
-      content: "Hello! I'm your Santa Barbara County Accountability Assistant. I can help you investigate corruption cases, analyze officer records, and explore transparency data. What would you like to investigate?",
+      content: "Hello! I'm your **Santa Barbara County Accountability Assistant**. I can help you investigate:\n\n• **Corruption cases** and active investigations\n• **Officer records** and status updates\n• **City transparency scores** and patterns\n• **Data analysis** across the county\n\nWhat would you like to investigate?",
       sender: 'ai',
       timestamp: new Date(),
     }
@@ -97,7 +97,19 @@ export default function AIChat() {
                     ? 'bg-gov-charcoal' 
                     : 'bg-gov-steel'
                 }`}>
-                  <p className="text-gov-text text-sm whitespace-pre-wrap">{message.content}</p>
+                  <div 
+                    className="text-gov-text text-sm whitespace-pre-wrap"
+                    dangerouslySetInnerHTML={{
+                      __html: message.content
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                        .replace(/^### (.*$)/gim, '<h3 class="text-base font-semibold mb-2">$1</h3>')
+                        .replace(/^## (.*$)/gim, '<h2 class="text-lg font-bold mb-2">$1</h2>')
+                        .replace(/^# (.*$)/gim, '<h1 class="text-xl font-bold mb-3">$1</h1>')
+                        .replace(/^• (.*$)/gim, '<li class="ml-4">• $1</li>')
+                        .replace(/^\d+\. (.*$)/gim, '<li class="ml-4">$1</li>')
+                    }}
+                  />
                 </div>
                 {message.sender === 'user' && (
                   <div className="w-8 h-8 bg-gov-text rounded-full flex items-center justify-center flex-shrink-0">
