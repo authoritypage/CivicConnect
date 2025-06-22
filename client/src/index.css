@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+
+  /* Government Theme Colors */
+  --gov-black: hsl(0, 0%, 4%);
+  --gov-gray: hsl(0, 0%, 10%);
+  --gov-charcoal: hsl(0, 0%, 16%);
+  --gov-steel: hsl(0, 0%, 23%);
+  --gov-red: hsl(0, 74%, 42%);
+  --gov-text: hsl(0, 0%, 96%);
+  --gov-text-secondary: hsl(0, 0%, 82%);
+}
+
+.dark {
+  --background: hsl(0, 0%, 4%);
+  --foreground: hsl(0, 0%, 96%);
+  --muted: hsl(0, 0%, 16%);
+  --muted-foreground: hsl(0, 0%, 64%);
+  --popover: hsl(0, 0%, 4%);
+  --popover-foreground: hsl(0, 0%, 96%);
+  --card: hsl(0, 0%, 10%);
+  --card-foreground: hsl(0, 0%, 96%);
+  --border: hsl(0, 0%, 16%);
+  --input: hsl(0, 0%, 16%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(0, 0%, 16%);
+  --secondary-foreground: hsl(0, 0%, 96%);
+  --accent: hsl(0, 0%, 16%);
+  --accent-foreground: hsl(0, 0%, 96%);
+  --destructive: hsl(0, 63%, 31%);
+  --destructive-foreground: hsl(0, 0%, 96%);
+  --ring: hsl(0, 0%, 84%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    background-color: var(--gov-black);
+    color: var(--gov-text);
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  .city-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .city-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .severity-critical {
+    border-left: 4px solid var(--gov-red);
+  }
+  
+  .severity-high {
+    border-left: 4px solid hsl(45, 93%, 47%);
+  }
+  
+  .severity-medium {
+    border-left: 4px solid hsl(142, 71%, 45%);
+  }
+  
+  .severity-low {
+    border-left: 4px solid hsl(0, 0%, 42%);
+  }
+
+  .bg-gov-black {
+    background-color: var(--gov-black);
+  }
+
+  .bg-gov-gray {
+    background-color: var(--gov-gray);
+  }
+
+  .bg-gov-charcoal {
+    background-color: var(--gov-charcoal);
+  }
+
+  .bg-gov-steel {
+    background-color: var(--gov-steel);
+  }
+
+  .text-gov-text {
+    color: var(--gov-text);
+  }
+
+  .text-gov-text-secondary {
+    color: var(--gov-text-secondary);
+  }
+
+  .text-gov-red {
+    color: var(--gov-red);
+  }
+
+  .border-gov-steel {
+    border-color: var(--gov-steel);
+  }
+
+  .border-gov-charcoal {
+    border-color: var(--gov-charcoal);
+  }
+
+  .hover\:border-gov-text-secondary:hover {
+    border-color: var(--gov-text-secondary);
+  }
+
+  .hover\:text-gov-text:hover {
+    color: var(--gov-text);
+  }
+
+  .hover\:bg-gray-600:hover {
+    background-color: hsl(0, 0%, 38%);
+  }
+
+  .hover\:bg-gov-text-secondary:hover {
+    background-color: var(--gov-text-secondary);
+  }
+}
