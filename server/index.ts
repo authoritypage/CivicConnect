@@ -1,6 +1,9 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { serveStatic } from "./vite"; // Only import what's actually exported
+
+// Define a local log function for now; you can expand or replace this later
+const log = (...args: any[]) => console.log(...args);
 
 const app = express();
 app.use(express.json());
@@ -47,20 +50,20 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
+  // --- START: Vite/Static Handling ---
+  // For future expansion: setupVite can be implemented and exported from vite.ts
   if (app.get("env") === "development") {
-    await setupVite(app, server);
+    // Uncomment and implement setupVite in vite.ts if/when needed:
+    // await setupVite(app, server);
+    log("setupVite would run here in development mode.");
   } else {
     serveStatic(app);
   }
+  // --- END: Vite/Static Handling ---
 
-  // --- START OF MODIFIED SECTION ---
   // Define the port, prioritizing the environment variable provided by Railway (or Replit)
   // The '5000' is a fallback for local development if process.env.PORT is not set.
   const port = parseInt(process.env.PORT || "5000", 10);
-  // --- END OF MODIFIED SECTION ---
 
   server.listen(
     {
